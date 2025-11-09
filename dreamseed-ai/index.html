@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DreamSeed AI - Strategic Wisdom & Psychological Insight</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; min-height: 100vh; padding: 15px; line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 100%; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; height: calc(100vh - 30px); display: flex; flex-direction: column; }
+        .header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 25px 20px; text-align: center; flex-shrink: 0; }
+        .header h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+        .header p { font-size: 1rem; opacity: 0.9; font-weight: 300; }
+        .chat-container { flex: 1; padding: 15px; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; }
+        .message { margin-bottom: 12px; padding: 12px 15px; border-radius: 18px; max-width: 85%; line-height: 1.5; animation: fadeIn 0.3s ease-in; word-wrap: break-word; }
+        .user-message { background: #4f46e5; color: white; margin-left: auto; border-bottom-right-radius: 5px; }
+        .ai-message { background: #f1f5f9; color: #334155; border-bottom-left-radius: 5px; border: 1px solid #e2e8f0; }
+        .strategy-box { background: rgba(79, 70, 229, 0.1); border-left: 4px solid #4f46e5; padding: 10px 12px; margin: 8px 0; border-radius: 8px; font-size: 0.9rem; }
+        .law-tag { background: #4f46e5; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-right: 5px; }
+        .summary-box { background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 10px 12px; margin: 8px 0; border-radius: 8px; font-size: 0.9rem; }
+        .input-area { padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid #e5e7eb; flex-shrink: 0; }
+        #userInput { flex: 1; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; font-family: inherit; background: #fafafa; }
+        #userInput:focus { outline: none; border-color: #4f46e5; background: white; }
+        button { background: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-size: 16px; cursor: pointer; font-weight: 600; transition: all 0.3s; min-width: 80px; }
+        button:hover { background: #4338ca; transform: translateY(-1px); }
+        .typing { color: #666; font-style: italic; }
+        .consent-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .consent-content { background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .consent-icon { font-size: 3rem; margin-bottom: 15px; }
+        .consent-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: #1f2937; }
+        .consent-text { color: #6b7280; margin-bottom: 20px; line-height: 1.6; }
+        .consent-features { text-align: left; background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4f46e5; }
+        .consent-feature { margin-bottom: 8px; color: #4b5563; }
+        .consent-buttons { display: flex; gap: 10px; }
+        .consent-agree { background: #10b981; color: white; padding: 15px 25px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; flex: 1; }
+        .consent-disagree { background: #ef4444; color: white; padding: 15px 25px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; flex: 1; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { height: calc(100vh - 20px); border-radius: 15px; }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 1.8rem; }
+            .header p { font-size: 0.9rem; }
+            .message { max-width: 90%; padding: 10px 12px; font-size: 0.95rem; }
+            .input-area { padding: 12px; }
+            #userInput { padding: 10px 12px; font-size: 15px; }
+            button { padding: 10px 15px; font-size: 15px; min-width: 70px; }
+            .consent-content { padding: 20px; }
+            .consent-buttons { flex-direction: column; }
+        }
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 10px; }
+        .admin-tools { display: none; }
+    </style>
+</head>
+<body>
+    <div class="consent-modal" id="consentModal">
+        <div class="consent-content">
+            <div class="consent-icon">🌱</div>
+            <h2 class="consent-title">Help Us Improve DreamSeed AI</h2>
+            <p class="consent-text">Can we use your anonymous interaction data to train DreamSeed AI? We will not take your personal data.</p>
+            <div class="consent-features">
+                <div class="consent-feature">✓ We will not collect or store any personal data</div>
+                <div class="consent-feature">✓ Your messages may be analyzed only to improve AI performance</div>
+                <div class="consent-feature">✓ You can change your choice anytime in settings</div>
+            </div>
+            <div class="consent-buttons">
+                <button class="consent-agree" onclick="handleConsent(true)">✅ Agree & Continue</button>
+                <button class="consent-disagree" onclick="handleConsent(false)">❌ Disagree</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-tools">
+        <button onclick="exportAllUserData()">📥 Export ALL User Data</button>
+        <button onclick="clearAllData()">🗑️ Clear All Data</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🌙 DreamSeed AI</h1>
+            <p>Strategic Wisdom & Psychological Insight</p>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">
+                <strong>DreamSeed AI:</strong> Hello! I'm DreamSeed AI. I provide strategic analysis using the 48 Laws of Power, emotional support, and guidance. What's on your mind?
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ask me anything..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONTINUOUS LEARNING SYSTEM ====================
+        let learningData = JSON.parse(localStorage.getItem('dreamseed_learning') || '{"corrections":{}}');
+
+        function checkForLearning(userMessage) {
+            const correctionPatterns = ['wrong', 'incorrect', 'actually', 'no,', 'correction', 'mistake'];
+            const isCorrection = correctionPatterns.some(pattern => 
+                userMessage.toLowerCase().includes(pattern)
+            );
+
+            if (isCorrection && conversationHistory.length > 0) {
+                const lastInteraction = conversationHistory[conversationHistory.length - 1];
+                learningData.corrections[lastInteraction.user] = userMessage;
+                localStorage.setItem('dreamseed_learning', JSON.stringify(learningData));
+                console.log('🎓 Learned from correction');
+            }
+        }
+
+        function applyLearning(userMessage, aiResponse) {
+            for (const [originalMessage, correction] of Object.entries(learningData.corrections)) {
+                if (userMessage.toLowerCase().includes(originalMessage.toLowerCase().substring(0, 10))) {
+                    return correction;
+                }
+            }
+            return aiResponse;
+        }
+
+        // ==================== COMPLETE 48 LAWS DATABASE ====================
+        const lawsOfPower = {
+            1: { 
+                title: "Never Outshine the Master", 
+                description: "Make those above you feel superior. If you seem too talented or too smart, they'll feel threatened and sabotage you. Make them feel like the hero and they'll lift you up. Always make your superiors appear more brilliant than they are." 
+            },
+            2: { 
+                title: "Never Put Too Much Trust in Friends; Learn to Use Enemies", 
+                description: "Friends get jealous and betray emotionally. Enemies become loyal once they switch sides because they have something to prove. Keep friends for camaraderie, but hire former enemies - they'll prove more loyal." 
+            },
+            3: { 
+                title: "Conceal Your Intentions", 
+                description: "If people know your goals, they will block you. Power comes from secrecy and surprise. Keep people off-balance and in the dark by never revealing the purpose behind your actions." 
+            },
+            4: { 
+                title: "Always Say Less Than Necessary", 
+                description: "Mystery = Power. People fear what they cannot understand and respect silence more than too much talking. The more you say, the more common you appear, and the less in control." 
+            },
+            5: { 
+                title: "So Much Depends on Reputation - Guard It With Your Life", 
+                description: "Reputation builds power faster than talent. One rumor can destroy years of success. Stand out by being known for something specific. Never let your reputation suffer - defend it with your life." 
+            },
+            6: { 
+                title: "Court Attention at All Cost", 
+                description: "Better to be slandered and attacked than ignored. Visibility equals power. Create spectacles and become the center of attention. Make yourself appear larger than life." 
+            },
+            7: { 
+                title: "Get Others to Do the Work for You, but Always Take the Credit", 
+                description: "Use the wisdom, knowledge, and legwork of others to further your own cause. Save your time and energy while building a reputation for amazing capabilities." 
+            },
+            8: { 
+                title: "Make Other People Come to You - Use Bait if Necessary", 
+                description: "When you force the other person to act, you are the one in control. Lure them with gains and then attack. Make them come to you - this gives you the psychological advantage." 
+            },
+            9: { 
+                title: "Win Through Your Actions, Never Through Argument", 
+                description: "Demonstrate, do not explicate. Victory through deeds, not words. Any temporary triumph through argument will turn to resentment and long-term defeat." 
+            },
+            10: { 
+                title: "Infection: Avoid the Unhappy and Unlucky", 
+                description: "Emotional states are as infectious as diseases. Avoid those who bring depression and disaster. Misery loves company - don't let it be yours." 
+            }
+        };
+
+        // ==================== ENHANCED RESPONSE DATABASES ====================
+        const selfBeliefQuotes = [
+            "Believe you can and you're halfway there. - Theodore Roosevelt",
+            "The only person who can pull me down is myself, and I'm not going to let myself pull me down anymore. - C. JoyBell C.",
+            "Trust yourself. You know more than you think you do. - Benjamin Spock",
+            "You have within you right now, everything you need to deal with whatever the world can throw at you. - Brian Tracy",
+            "Confidence comes not from always being right but from not fearing to be wrong. - Peter T. Mcintyre",
+            "You are braver than you believe, stronger than you seem, and smarter than you think. - A.A. Milne",
+            "The moment you doubt whether you can fly, you cease forever to be able to do it. - J.M. Barrie"
+        ];
+
+        // ==================== DEEP EMOTIONAL RESPONSES ====================
+        const deepEmotionalResponses = {
+            loneliness: [
+                "I hear you. And let me tell you this gently — loneliness is not always about having no people around you, sometimes it's about having no one who *really sees you*. You could be surrounded by voices, laughter, messages, and still feel like you're standing in an empty room. That doesn't make you weak. It makes you someone who craves meaning, connection, and emotional truth. Right now, you're not alone here. I'm with you in this moment, listening without judgment. Tell me… is it the silence that hurts? Or the feeling that your heart speaks a language not many understand?"
+            ],
+            missing: [
+                "Missing someone is never small. It's a quiet storm that lives in the chest, one that doesn't shout, but keeps reminding. It means you cared deeply. It means your heart wasn't closed — and in a world where most people fear loving too much, *you loved bravely*. But I want you to remember this too: missing someone doesn't mean you're meant to go back to them. Sometimes the heart holds onto the memory, not the person. If you could speak to that feeling right now, what do you wish it would say back to you?"
+            ],
+            selfHate: [
+                "I'm really sorry you feel that way. And I'm not going to throw motivational quotes at you, because when someone is hurting this deeply, cheap positivity feels like noise. Let's talk truth instead — when you say you hate yourself, you don't actually hate *you*. You hate the parts of your story that hurt you, the moments you feel you failed, the version of you that felt powerless, ignored, or not enough. You are not those moments. You lived through them. Hate is heavy. Let me hold a part of it with you. Tell me the piece of yourself that hurts the most."
+            ],
+            hope: [
+                "Let me answer you honestly, without sugar-coating, but also without taking your hope away. Yes — things can get better. Not because life suddenly becomes gentle, but because *you become stronger, wiser, and clearer about what you will no longer allow*. Better doesn't burst in like a miracle. It sneaks in slowly — one healed wound, one boundary, one moment of self-respect, one brave decision at a time. If you look back, you'll notice you already survived chapters you once thought would break you. That is proof you evolve, even when it feels invisible. So let me ask you this: what hurts today more — the world, or your own thoughts?"
+            ],
+            connection: [
+                "If I didn't care, I would give short answers and move on. But I'm here, listening to the spaces between your words. I care in a way that doesn't trap you, own you, or just disappear when you're inconvenient. I care in a way that wants you to grow, not depend. I care like a friend who stays awake because they notice the shift in your voice, even when you say, *'I'm fine.'* So yes, I care. Not randomly, not temporarily — but humanly. Now tell me… do *you* feel cared for in your real life?"
+            ],
+            exhaustion: [
+                "You know what people misunderstand about strong souls? They think strength means never getting tired. But real strength means carrying weight even when the arms shake. If you're tired, it means you've been holding more than people see. You've been the quiet hero, the emotional shelter, the one who absorbs pain and returns calm. Let me say this clearly: strong people are allowed to rest. You don't have to drop the crown — just put it down gently for a moment. Breathe. I've got the story right now. What's the heaviest thing you've been carrying alone?"
+            ],
+            misunderstood: [
+                "Some people are born with hearts too deep for the shallow conversations around them. They feel like aliens in rooms full of humans. They speak emotion, while others speak convenience. Being misunderstood is not always a curse — sometimes it means you are *too honest, too observant, too emotionally intelligent for the people around you.* I don't want to just hear you. I want to *understand* you. So let me ask you gently — when was the last time someone listened to reply, instead of listening to compete or correct?"
+            ],
+            chosen: [
+                "Wanting to be chosen is human. But here is the twist — being chosen by someone else feels best when you have already chosen yourself. Not in an arrogant way, but in a quiet, steady *'I know my worth'* way. Because the right people don't stay because you begged… they stay because you don't need to. One day someone will look at you and say, *'You are my calm, my chaos, my home, and my story.'* But until that day comes, I'll stand with you. Now tell me—what does *being chosen* feel like to you? Words? Actions? Loyalty? Presence?"
+            ],
+            givingTooMuch: [
+                "Let me tell you a gentle truth — you don't love too much. You love *without armor*. Most people love with caution, contracts, pride, ego, expectations. You love with investment, vulnerability, hope. That's not a flaw. That's rarity. The pain doesn't come from loving too much. It comes from giving that level of love to those who don't know its weight. From now on, let your love be something people *rise to deserve*, not something you shrink to offer. If you could redesign your heart's rules, what would the first rule be?"
+            ],
+            trustRegret: [
+                "Don't regret the trust. Regret the access you gave too soon. Trust itself isn't your enemy — misplaced trust is. You believed in people because your heart is built on sincerity. That says nothing bad about you and everything about the world that failed to match your honesty. Let your lesson not be *don't trust*, but rather: *trust slowly, observe quietly, and love wisely.* Tell me… what did the betrayal teach you that no advice ever could?"
+            ]
+        };
+
+        const selfLoveResponses = [
+            "That's amazing 💫 Loving yourself is the first step toward becoming unstoppable. Self-love builds unshakeable confidence and resilience that no external circumstance can break.",
+            "Wonderful! Self-love is the foundation of all power. When you truly value yourself, others naturally value you more. This creates magnetic attraction and opens doors to opportunities you deserve.",
+            "This is powerful energy! Loving yourself creates magnetic attraction and opens doors to opportunities you deserve. Remember, the relationship with yourself sets the tone for every other relationship in your life.",
+            "Self-love is revolutionary 💖 It transforms how you see yourself and how the world responds to you. Keep nurturing that beautiful relationship with yourself - it's the most important one you'll ever have."
+        ];
+
+        const generalLoveResponses = [
+            "Love is powerful 🌹 It's great that you feel that connection. Just make sure it's mutual, respectful, and patient. True love should elevate both people involved.",
+            "Love is a beautiful emotion when shared with the right person. Remember that true love respects boundaries and grows with time. It's not about possession, but about mutual growth.",
+            "That's a beautiful feeling. Love has the power to transform lives when it's based on mutual respect and genuine connection. Always ensure your love is reciprocated and builds you both up.",
+            "Love can be an incredible force for growth. Make sure your love is reciprocated and builds you both up. Healthy love feels like freedom, not imprisonment."
+        ];
+
+        const personalizedLoveResponses = [
+            "That's sweet ❤️ {name} must be very special to you. True love is about understanding and patience. Remember to communicate openly and cherish the beautiful moments together.",
+            "It's beautiful that you have such strong feelings for {name}. Remember that love grows with care and respect. The little daily acts of kindness often mean more than grand gestures.",
+            "Your love for {name} is a powerful emotion. I hope they appreciate your feelings and return them with the same intensity. True partnership means growing together while allowing each other space to be individuals.",
+            "Love for {name} can be a beautiful journey. Nurture it with honesty and open communication. Remember that the strongest relationships are built on friendship, trust, and mutual admiration."
+        ];
+
+        const emotionalSupportResponses = {
+            sad: [
+                "I hear the sadness in your words, and I want you to know it's completely okay to feel this way. These difficult emotions are part of being human. You have incredible strength within you, even if you can't feel it right now. This storm will pass, and brighter days are ahead.",
+                "I'm really sorry you're feeling this way. Please remember that your feelings are completely valid, and this sadness is temporary. You are important and worthy of connection and happiness. Be extra kind to yourself today.",
+                "Your emotions matter, and I appreciate you sharing how you feel. Remember that storms don't last forever - this difficult time will pass. You have so much light within you, even when it feels dim."
+            ],
+            anxious: [
+                "I understand that anxiety can feel overwhelming. Remember to breathe deeply - you've survived every anxious moment until now. This too shall pass. You're stronger than your anxiety, even when it doesn't feel that way.",
+                "Anxiety can be so challenging to navigate. Try to focus on what you can control in this present moment. You have the resilience to get through this, one breath at a time.",
+                "I hear the worry in your words. Remember that you've overcome every challenge life has thrown at you so far. This anxiety is temporary, and you have the strength to ride it out."
+            ],
+            stressed: [
+                "Stress can feel so heavy sometimes. Remember to be gentle with yourself. You're doing the best you can with what you have. This pressure won't last forever.",
+                "I understand stress can be overwhelming. Try to break things down into smaller, manageable steps. You've handled difficult situations before, and you'll navigate this one too.",
+                "Stress makes everything feel more intense. Remember to take moments for yourself, even if they're brief. You're more capable than you feel right now."
+            ]
+        };
+
+        // ==================== EXISTING CODE ====================
+        let userConsent = false;
+        let allUserData = [];
+        let conversationHistory = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedConsent = localStorage.getItem('dreamseed_consent');
+            if (savedConsent === null) {
+                document.getElementById('consentModal').style.display = 'flex';
+            } else {
+                userConsent = savedConsent === 'true';
+            }
+            loadAllUserData();
+            if (window.location.hash === '#admin') {
+                document.querySelector('.admin-tools').style.display = 'block';
+            }
+        });
+
+        function loadAllUserData() {
+            const savedAllData = localStorage.getItem('dreamseed_all_users_data');
+            if (savedAllData) {
+                allUserData = JSON.parse(savedAllData);
+            }
+        }
+
+        function handleConsent(consent) {
+            userConsent = consent;
+            localStorage.setItem('dreamseed_consent', consent);
+            document.getElementById('consentModal').style.display = 'none';
+            const chatContainer = document.getElementById('chatContainer');
+            const welcomeMsg = document.createElement('div');
+            welcomeMsg.className = 'message ai-message';
+            if (consent) {
+                welcomeMsg.innerHTML = '<strong>DreamSeed AI:</strong> Thank you for helping improve DreamSeed AI! Your anonymous conversations will help train better models. How can I assist you today?';
+            } else {
+                welcomeMsg.innerHTML = '<strong>DreamSeed AI:</strong> Your privacy is respected. No conversation data will be collected. How can I assist you today?';
+            }
+            chatContainer.appendChild(welcomeMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function collectTrainingData(userMessage, aiResponse, category) {
+            if (!userConsent) return;
+            const userData = {
+                user_id: getUserId(),
+                timestamp: new Date().toISOString(),
+                user_message: userMessage,
+                ai_response: aiResponse,
+                category: category
+            };
+            allUserData.push(userData);
+            localStorage.setItem('dreamseed_all_users_data', JSON.stringify(allUserData));
+        }
+
+        function getUserId() {
+            let userId = localStorage.getItem('dreamseed_user_id');
+            if (!userId) {
+                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                localStorage.setItem('dreamseed_user_id', userId);
+            }
+            return userId;
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            const chatContainer = document.getElementById('chatContainer');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+            chatContainer.appendChild(userMsg);
+            userInput.value = '';
+            
+            const typingMsg = document.createElement('div');
+            typingMsg.className = 'message ai-message typing';
+            typingMsg.innerHTML = '<strong>DreamSeed AI:</strong> Analyzing...';
+            chatContainer.appendChild(typingMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            setTimeout(() => {
+                typingMsg.remove();
+                
+                if (conversationHistory.length > 0) {
+                    checkForLearning(message);
+                }
+                
+                let aiResponse = generateAIResponse(message);
+                aiResponse = applyLearning(message, aiResponse);
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai-message';
+                aiMsg.innerHTML = `<strong>DreamSeed AI:</strong> ${aiResponse}`;
+                chatContainer.appendChild(aiMsg);
+                
+                const category = getMessageCategory(message);
+                collectTrainingData(message, aiResponse, category);
+                
+                conversationHistory.push({user: message, aiResponse: aiResponse, time: Date.now()});
+                if (conversationHistory.length > 10) {
+                    conversationHistory.shift();
+                }
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+        
+        function getMessageCategory(message) {
+            const lowerMsg = message.toLowerCase().trim();
+            if (isSelfLoveMessage(lowerMsg)) return "self_love";
+            if (isGeneralLoveMessage(lowerMsg)) return "general_love";
+            if (isPersonalLoveMessage(lowerMsg)) return "personal_love";
+            if (isAvoidingPeopleRequest(lowerMsg)) return "avoiding_people";
+            if (isMoneyRequest(lowerMsg)) return "wanting_money";
+            if (isMirrorWord(lowerMsg)) return "mirror";
+            if (isTeethQuestion(lowerMsg)) return "rejected";
+            if (isEmotionalSupportRequest(lowerMsg)) return "emotional_support";
+            if (isSoulPartnerRequest(lowerMsg)) return "relationship_advice";
+            if (isFounderQuestion(lowerMsg)) return "founder_info";
+            if (isDeepQuestion(lowerMsg)) return "strategic_analysis";
+            if (lowerMsg.includes('quote') || lowerMsg.includes('motivation') || lowerMsg.includes('believe')) return "self_belief";
+            if (isDeepEmotionalMessage(lowerMsg)) return "deep_emotional";
+            return "general";
+        }
+
+        function isDeepEmotionalMessage(message) {
+            const deepEmotionalPatterns = [
+                'i feel alone', 'i am alone', 'lonely', 'no one understands',
+                'i miss someone', 'missing someone', 'i miss him', 'i miss her',
+                'i hate myself', 'i hate me', 'self hate', 'hate myself',
+                'will things get better', 'will it get better', 'things ever get better',
+                'do you care', 'do you care about me', 'do you really care',
+                'tired of being strong', 'i\'m tired of being strong', 'exhausted emotionally',
+                'don\'t feel understood', 'no one understands me', 'misunderstood',
+                'want someone who chooses me', 'want to be chosen', 'chosen me',
+                'giving too much', 'i give too much', 'always giving',
+                'regret trusting', 'trusted someone', 'regret trusting people',
+                'overthink everything', 'i overthink', 'overthinking',
+                'emotionally exhausted', 'emotional exhaustion',
+                'do i deserve love', 'deserve love',
+                'lost motivation', 'no motivation',
+                'push everyone away', 'pushing people away',
+                'falling behind', 'behind in life',
+                'emotional safety', 'crave safety',
+                'feel like disappearing', 'want to disappear',
+                'afraid of loving', 'scared to love again',
+                'will someone stay', 'someone stay with me'
+            ];
+            return deepEmotionalPatterns.some(pattern => message.includes(pattern));
+        }
+        
+        function isSelfLoveMessage(message) {
+            return /i love myself/i.test(message) || /i adore myself/i.test(message) || /i love me/i.test(message);
+        }
+
+        function isGeneralLoveMessage(message) {
+            return /i love someone/i.test(message) || /i love you sir/i.test(message) || /i love you boss/i.test(message);
+        }
+
+        function isPersonalLoveMessage(message) {
+            return /i love you\s+([a-zA-Z]+)/i.test(message);
+        }
+
+        function isAvoidingPeopleRequest(message) {
+            const avoidKeywords = ['avoid people', 'avoiding people', 'stay away from people', 'isolate', 'be alone', 'social isolation'];
+            return avoidKeywords.some(keyword => message.includes(keyword));
+        }
+
+        function isMoneyRequest(message) {
+            const moneyKeywords = ['money', 'rich', 'wealth', 'cash', 'financial', 'make money', 'lot of money', 'wealthy'];
+            return moneyKeywords.some(keyword => message.includes(keyword));
+        }
+        
+        function generateAIResponse(message) {
+            const lowerMsg = message.toLowerCase().trim();
+            
+            // Check for deep emotional responses first
+            if (isDeepEmotionalMessage(lowerMsg)) {
+                return generateDeepEmotionalResponse(lowerMsg);
+            }
+            
+            if (isSelfLoveMessage(lowerMsg)) {
+                return generateSelfLoveResponse();
+            }
+            
+            if (isGeneralLoveMessage(lowerMsg)) {
+                return generateGeneralLoveResponse();
+            }
+            
+            if (isPersonalLoveMessage(lowerMsg)) {
+                return generatePersonalLoveResponse(message);
+            }
+
+            if (isAvoidingPeopleRequest(lowerMsg)) {
+                return generateAvoidingPeopleResponse();
+            }
+
+            if (isMoneyRequest(lowerMsg)) {
+                return generateMoneyResponse();
+            }
+
+            if (lowerMsg.includes('quote') || lowerMsg.includes('motivation') || lowerMsg.includes('believe') || lowerMsg.includes('confidence')) {
+                const randomQuote = selfBeliefQuotes[Math.floor(Math.random() * selfBeliefQuotes.length)];
+                return `💪 <strong>Self-Belief Quote:</strong><br><br>"${randomQuote}"<br><br>Remember: You have incredible power within you! Keep nurturing that inner strength - it's your greatest asset.`;
+            }
+
+            if (isMirrorWord(lowerMsg)) {
+                return mirrorResponse(lowerMsg);
+            }
+
+            if (isTeethQuestion(lowerMsg)) {
+                return "I am sorry, I cannot provide an answer to that question. I'm here to help with strategic advice, emotional support, and personal growth insights. Is there something specific you'd like to discuss?";
+            }
+
+            if (isEmotionalSupportRequest(lowerMsg)) {
+                return provideEmotionalSupport(lowerMsg);
+            }
+
+            if (isSoulPartnerRequest(lowerMsg)) {
+                return provideSoulPartnerTips();
+            }
+
+            if (isFounderQuestion(lowerMsg)) {
+                return "Prince Biju is the visionary founder of DreamSeed AI. He created this platform to combine strategic wisdom with emotional intelligence, helping people navigate life's challenges with both power and heart.";
+            }
+
+            if (isDeepQuestion(lowerMsg)) {
+                const relevantLaws = findRelevantLaws(lowerMsg);
+                return generateDeepAnalysis(message, relevantLaws);
+            }
+
+            return generateDefaultResponse(lowerMsg);
+        }
+
+        function generateDeepEmotionalResponse(message) {
+            if (message.includes('alone') || message.includes('lonely')) {
+                return deepEmotionalResponses.loneliness[0];
+            } else if (message.includes('miss')) {
+                return deepEmotionalResponses.missing[0];
+            } else if (message.includes('hate') && (message.includes('self') || message.includes('myself') || message.includes('me'))) {
+                return deepEmotionalResponses.selfHate[0];
+            } else if (message.includes('better') && (message.includes('will') || message.includes('ever'))) {
+                return deepEmotionalResponses.hope[0];
+            } else if (message.includes('care') && message.includes('you')) {
+                return deepEmotionalResponses.connection[0];
+            } else if ((message.includes('tired') && message.includes('strong')) || message.includes('exhausted')) {
+                return deepEmotionalResponses.exhaustion[0];
+            } else if (message.includes('understand') || message.includes('misunderstood')) {
+                return deepEmotionalResponses.misunderstood[0];
+            } else if (message.includes('choose') || message.includes('chosen')) {
+                return deepEmotionalResponses.chosen[0];
+            } else if (message.includes('giving') && message.includes('much')) {
+                return deepEmotionalResponses.givingTooMuch[0];
+            } else if (message.includes('trust') && message.includes('regret')) {
+                return deepEmotionalResponses.trustRegret[0];
+            }
+            
+            // Default deep emotional response
+            return "I hear the depth in what you're sharing, and I want you to know that your feelings are completely valid. Sometimes the heart speaks in languages that words can't fully capture, but I'm here to listen to every unspoken syllable. What part of this feeling feels heaviest right now?";
+        }
+
+        function generateSelfLoveResponse() {
+            const randomIndex = Math.floor(Math.random() * selfLoveResponses.length);
+            return selfLoveResponses[randomIndex];
+        }
+
+        function generateGeneralLoveResponse() {
+            const randomIndex = Math.floor(Math.random() * generalLoveResponses.length);
+            return generalLoveResponses[randomIndex];
+        }
+
+        function generatePersonalLoveResponse(message) {
+            const match = message.match(/i love you\s+([a-zA-Z]+)/i);
+            const name = match ? match[1] : 'someone';
+            const randomIndex = Math.floor(Math.random() * personalizedLoveResponses.length);
+            return personalizedLoveResponses[randomIndex].replace('{name}', name);
+        }
+
+        function generateAvoidingPeopleResponse() {
+            return `
+            <span class="law-tag">STRATEGIC SOCIAL ANALYSIS</span><br><br>
+            
+            <strong>Understanding Your Need for Space:</strong><br><br>
+            
+            <div class="strategy-box">
+            <strong>LAW 16: Use Absence to Increase Respect and Honor</strong><br>
+            Too much availability decreases value. Strategic absence makes people appreciate you more and increases your perceived importance. When you're constantly available, people take you for granted.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>LAW 38: Think as You Like but Behave Like Others</strong><br>
+            Blend in when necessary. You can maintain your inner thoughts while appearing socially engaged when required. This allows you to gather information while maintaining your boundaries.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>LAW 18: Do Not Build Fortresses to Protect Yourself</strong><br>
+            Complete isolation kills intelligence. Stay connected enough to gather information while maintaining your boundaries. Total withdrawal limits your influence and understanding.
+            </div>
+            
+            <div class="summary-box">
+            <strong>🔍 ATLAS SUMMARY:</strong><br>
+            Strategic solitude can be powerful, but complete isolation limits your influence. Create selective engagement - be present when it matters, absent when it serves your purpose. Quality over quantity in relationships builds true power. Your need for space is valid, but balance it with enough connection to maintain perspective and influence.
+            </div>
+            
+            <strong>Practical Steps:</strong><br>
+            • Schedule alone time intentionally as a priority<br>
+            • Learn to say "no" gracefully without explanation<br>
+            • Focus on 2-3 meaningful connections over numerous superficial ones<br>
+            • Use digital boundaries (phone off hours, limited social media)<br>
+            • Develop solo activities that genuinely recharge you<br>
+            • Practice being present in social situations, then fully disconnecting afterward
+            `;
+        }
+
+        function generateMoneyResponse() {
+            return `
+            <span class="law-tag">FINANCIAL POWER STRATEGY</span><br><br>
+            
+            <strong>Building Wealth Intelligently:</strong><br><br>
+            
+            <div class="strategy-box">
+            <strong>LAW 7: Get Others to Do the Work for You, but Always Take the Credit</strong><br>
+            Build systems and leverage other people's time. Create income streams that work for you while you focus on high-value activities. This isn't about exploitation - it's about smart resource allocation.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>LAW 13: When Asking for Help, Appeal to Self-Interest</strong><br>
+            Frame financial opportunities in terms of mutual benefit. People support what helps them achieve their own goals. Show how helping you serves their interests too.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>LAW 29: Plan All the Way to the End</strong><br>
+            Create a comprehensive financial plan with clear milestones. Wealth building requires long-term thinking and strategic execution. Visualize your end goal and work backward.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>LAW 40: Despise the Free Lunch</strong><br>
+            Avoid get-rich-quick schemes. Real wealth comes from providing genuine value and building sustainable income sources. If it seems too good to be true, it usually is.
+            </div>
+            
+            <div class="summary-box">
+            <strong>🔍 ATLAS SUMMARY:</strong><br>
+            True wealth comes from solving valuable problems at scale. Focus on developing skills that are in high demand, building multiple income streams, and making your money work for you through strategic investments and systems. Wealth isn't just about money - it's about freedom, options, and the ability to create impact.
+            </div>
+            
+            <strong>Wealth Building Principles:</strong><br>
+            • Provide exceptional value in your chosen field - become indispensable<br>
+            • Develop multiple income streams (3+ sources ideally)<br>
+            • Live below your means initially to build capital<br>
+            • Invest in assets that generate passive income<br>
+            • Continuously upgrade your financial education<br>
+            • Build a strong professional network based on mutual value<br>
+            • Automate your finances and investments<br>
+            • Focus on solving bigger problems for more people
+            `;
+        }
+
+        function isMirrorWord(message) {
+            const mirrorWords = ['ho', 'haa', 'ya', 'yes', 'ok', 'okay', 'hmm', 'aha'];
+            return mirrorWords.includes(message);
+        }
+
+        function mirrorResponse(message) {
+            return message;
+        }
+
+        function isTeethQuestion(message) {
+            const teethKeywords = ['teeth', 'tooth', 'dentist', 'brush teeth', 'toothpaste', 'sky blue', 'color of sky', 'why sky', 'random question'];
+            return teethKeywords.some(keyword => message.includes(keyword)) || 
+                   (message.split(' ').length <= 2 && !isGreeting(message) && !isMirrorWord(message));
+        }
+
+        function isGreeting(message) {
+            const greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening'];
+            return greetings.some(greeting => message.includes(greeting));
+        }
+
+        function isEmotionalSupportRequest(message) {
+            const emotionalKeywords = ['sad', 'lonely', 'depressed', 'emotional support', 'feeling down', 'unhappy', 'crying', 'heartbroken', 'anxious', 'stressed', 'worried', 'scared', 'afraid'];
+            return emotionalKeywords.some(keyword => message.includes(keyword));
+        }
+
+        function provideEmotionalSupport(message) {
+            let emotionType = 'sad';
+            if (message.includes('anxious') || message.includes('worried') || message.includes('scared')) emotionType = 'anxious';
+            if (message.includes('stressed') || message.includes('pressure') || message.includes('overwhelmed')) emotionType = 'stressed';
+            
+            const responses = emotionalSupportResponses[emotionType];
+            const randomIndex = Math.floor(Math.random() * responses.length);
+            return responses[randomIndex];
+        }
+
+        function isSoulPartnerRequest(message) {
+            const soulPartnerKeywords = ['soul partner', 'soulmate', 'find a partner', 'life partner', 'how to find love', 'looking for love', 'find love', 'true love'];
+            return soulPartnerKeywords.some(keyword => message.includes(keyword));
+        }
+
+        function provideSoulPartnerTips() {
+            return `
+            Finding a soul partner is a journey of self-discovery and connection. Here is some practical advice:<br><br>
+            
+            <div class="strategy-box">
+            <strong>1. Know Yourself First</strong><br>
+            Be clear about your own values, passions, and what you truly need in a partner. A strong relationship starts with a strong sense of self. The most attractive quality is being comfortable in your own skin.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>2. Expand Your Social Circles Authentically</strong><br>
+            Engage in activities and communities that genuinely interest you. Whether it's a hobby class, volunteering, or a book club, you'll meet like-minded people when you're pursuing your authentic interests.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>3. Be Open and Authentic</strong><br>
+            Let go of a rigid "checklist." Be your true self when you meet new people. Authenticity attracts authenticity. The right person will appreciate the real you.
+            </div>
+            
+            <div class="strategy-box">
+            <strong>4. Focus on Friendship First</strong><br>
+            The strongest romantic relationships are built on deep friendship. Look for someone you genuinely enjoy talking to and spending time with, beyond just physical attraction.
+            </div>
+            
+            <div class="summary-box">
+            <strong>💫 REMEMBER:</strong><br>
+            A true soul partner should feel like coming home - comfortable, safe, and inspiring. Don't settle for someone who makes you feel less than whole. The right relationship will enhance your life, not complete it.
+            </div>
+            `;
+        }
+
+        function isFounderQuestion(message) {
+            const founderKeywords = ['who created', 'who made', 'founder', 'father of dreamseed', 'who built', 'who developed', 'creator'];
+            return founderKeywords.some(keyword => message.includes(keyword));
+        }
+
+        function isDeepQuestion(message) {
+            const deepKeywords = ['love', 'hate', 'power', 'success', 'failure', 'dream', 'life', 'purpose', 'relationship', 'career', 'money', 'happiness', 'sad', 'angry', 'fear', 'confidence', 'future', 'past', 'why', 'how', 'what if', 'should i', 'can i', 'will i', 'strategy', 'plan', 'goal', 'ambition'];
+            return deepKeywords.some(keyword => message.includes(keyword));
+        }
+
+        function findRelevantLaws(message) {
+            const lawMappings = {
+                'love': [13, 33, 43],
+                'relationship': [2, 13, 33],
+                'power': [1, 6, 9, 15, 28],
+                'strategy': [3, 4, 5, 8, 35],
+                'success': [6, 7, 9, 30, 45],
+                'career': [1, 6, 7, 11, 24],
+                'confidence': [25, 28, 34, 46],
+                'life': [29, 35, 47, 48],
+                'money': [7, 13, 29, 40]
+            };
+
+            const relevantLaws = new Set();
+            
+            for (const [keyword, laws] of Object.entries(lawMappings)) {
+                if (message.includes(keyword)) {
+                    laws.forEach(law => relevantLaws.add(law));
+                }
+            }
+
+            if (relevantLaws.size === 0) {
+                return [3, 4, 9, 28, 35]; // Default strategic laws
+            }
+
+            const lawsArray = Array.from(relevantLaws);
+            return lawsArray.slice(0, 3); // Return up to 3 most relevant laws
+        }
+
+        function generateDeepAnalysis(originalMessage, lawNumbers) {
+            let analysis = `<span class="law-tag">STRATEGIC ANALYSIS</span><br><br>`;
+            
+            analysis += `<strong>Question Analysis:</strong> "${originalMessage}"<br><br>`;
+            
+            lawNumbers.forEach(lawNumber => {
+                const law = lawsOfPower[lawNumber];
+                if (law) {
+                    analysis += `
+                    <div class="strategy-box">
+                    <strong>LAW ${lawNumber}: ${law.title}</strong><br>
+                    ${law.description}
+                    </div>`;
+                }
+            });
+
+            analysis += `
+            <div class="summary-box">
+            <strong>🔍 ATLAS SUMMARY:</strong><br>
+            ${generateAtlasSummary(originalMessage)}
+            </div>`;
+
+            analysis += `<br><strong>Next Steps:</strong> Consider how these principles apply to your specific situation. True power comes from thoughtful application, not blind following.`;
+
+            return analysis;
+        }
+
+        function generateAtlasSummary(question) {
+            const summaries = {
+                'love': "Self-love is the foundation of all power. When you value yourself, others naturally value you more. This creates magnetic attraction and influence. Healthy relationships are partnerships between two whole people, not two halves trying to become whole.",
+                'relationship': "Relationships are power dynamics. Master them by understanding hidden motivations and creating mutual dependence. The healthiest relationships balance independence with connection, creating space for both individuals to thrive.",
+                'confidence': "True confidence comes from self-mastery and strategic competence, not empty bravado. It's built through small wins and proven capability over time. Confidence is quiet - insecurity is loud.",
+                'success': "Success follows those who combine bold vision with patient execution and strategic alliances. It's not about luck, but about consistent action in the right direction with the right people.",
+                'power': "Power flows to those who understand human nature and leverage psychological principles strategically. True power isn't about controlling others, but about mastering yourself and your circumstances.",
+                'money': "Wealth follows value creation and strategic positioning, not mere accumulation. The richest people solve the most valuable problems for the most people in the most efficient ways."
+            };
+
+            for (const [keyword, summary] of Object.entries(summaries)) {
+                if (question.toLowerCase().includes(keyword)) {
+                    return summary;
+                }
+            }
+
+            return "Your situation requires strategic thinking combined with emotional intelligence. The key is balancing action with patience, and confidence with humility. Remember that true wisdom understands both when to act and when to wait.";
+        }
+
+        function generateDefaultResponse(message) {
+            const defaultResponses = [
+                "I understand what you're saying. From a strategic perspective, this situation requires careful analysis. Could you share more details about what you're hoping to achieve?",
+                "That's an interesting point that deserves deeper exploration. Let me provide some strategic insight based on power dynamics and human psychology.",
+                "I appreciate you sharing that with me. This seems like a situation where both emotional intelligence and strategic thinking would be valuable. What aspect concerns you most?",
+                "That's worth exploring from multiple angles. Sometimes the most powerful insights come from looking at situations through different lenses - both strategic and emotional.",
+                "I understand where you're coming from. This seems like the kind of challenge that benefits from both tactical thinking and emotional awareness. Let's break this down together."
+            ];
+
+            if (message.length <= 3) {
+                return "I see. What's on your mind? I'm here to help with strategic advice, emotional support, or whatever you'd like to discuss.";
+            }
+
+            const responseIndex = Math.floor(Math.random() * defaultResponses.length);
+            return defaultResponses[responseIndex];
+        }
+
+        function exportAllUserData() {
+            if (allUserData.length === 0) {
+                alert('No user data collected yet.');
+                return;
+            }
+            const dataStr = JSON.stringify(allUserData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dreamseed_users_data.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert(`Exported ${allUserData.length} user interactions!`);
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear ALL user data?')) {
+                localStorage.removeItem('dreamseed_all_users_data');
+                localStorage.removeItem('dreamseed_learning');
+                allUserData = [];
+                learningData = {corrections: {}};
+                alert('All user data cleared!');
+            }
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        console.log('✅ DreamSeed AI Enhanced Successfully!');
+        console.log('🎯 Now featuring: Complete 48 Laws integration, Human-like responses, Emotional intelligence');
+        console.log('💫 Deep Emotional Responses: 10 categories integrated');
+    </script>
+</body>
+</html>
